@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:koala/ToDoElement.dart';
+import 'package:koala/todo/ToDoElement.dart';
 
 class ToDoGroup {
   String name;

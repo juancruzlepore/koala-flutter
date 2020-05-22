@@ -32,11 +32,9 @@ class ToDoElement {
 
 class ToDoElementWidget extends StatefulWidget {
 
-  ToDoElement e;
+  final ToDoElement e;
 
-  ToDoElementWidget(ToDoElement element){
-    this.e = element;
-  }
+  ToDoElementWidget(this.e);
 
   @override
   State<StatefulWidget> createState() {

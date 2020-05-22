@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:koala/ToDoGroup.dart';
+import 'package:koala/todo/ToDoGroup.dart';
 import 'ToDoElement.dart';
 
 class ToDoListWidget extends StatefulWidget {
-  ToDoListWidget({Key key, this.title}) : super(key: key);
-
-  final String title;
+  ToDoListWidget({Key key}) : super(key: key);
 
   @override
   _ToDoListWidgetState createState() => _ToDoListWidgetState();
@@ -21,14 +19,7 @@ class _ToDoListWidgetState extends State<ToDoListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
