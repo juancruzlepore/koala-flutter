@@ -1,6 +1,7 @@
 {
   "name": "koala-flutter",
   "scripts": {
-    "start": "flutter run -d web"
+    "start": "flutter run -d web --web-port 80",
+    "build": "flutter build web"
   }
 }
