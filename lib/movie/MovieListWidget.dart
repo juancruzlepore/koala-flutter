@@ -68,6 +68,7 @@ class _MovieListWidgetState extends State<MovieListWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.orange[800],
         title: Row(children: [
           Text("Movies"),
           Expanded(

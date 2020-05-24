@@ -48,11 +48,9 @@ class ToDoGroup {
 }
 
 class ToDoGroupWidget extends StatefulWidget {
-  ToDoGroup e;
+  final ToDoGroup e;
 
-  ToDoGroupWidget(ToDoGroup element) {
-    this.e = element;
-  }
+  ToDoGroupWidget(this.e);
 
   @override
   State<StatefulWidget> createState() {

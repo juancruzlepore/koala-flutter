@@ -6,27 +6,50 @@ import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:koala/Person.dart';
 
+abstract class IMDBAPI {
+  static const String key = "847a4c0c";
+  static const String keyParamName = "apikey";
+  static const String domain = "www.omdbapi.com";
+  static const String path = "/";
+}
+
+class IMDBResult {
+  String title;
+  double rating;
+  bool found;
+
+  static final IMDBResult error = IMDBResult(found: false);
+
+  IMDBResult({this.title, this.rating, this.found});
+
+}
+
 class Movie {
   String title;
   Person creator;
   bool seen;
+  double rating;
 
-  Movie(this.title, this.creator, this.seen);
+  Movie(this.title, this.creator, this.seen, [this.rating = -1]);
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
       json['name'],
       Person.fromName(json['addedBy']),
       json['seen'],
+      json['rating'],
     );
   }
 }
 
+// &t=Ice age
 Future<List<Movie>> fetchMovies() async {
   final response =
       await http.get('https://agile-hamlet-28702.herokuapp.com/movies/all');
   if (response.statusCode == 200) {
-    Map<String, dynamic> decoded = (JSON.jsonDecode(JSON.jsonDecode(response.body).toString()) as Map<String, dynamic>);
+    Map<String, dynamic> decoded =
+        (JSON.jsonDecode(JSON.jsonDecode(response.body).toString())
+            as Map<String, dynamic>);
     List<dynamic> decodedList = decoded["movies"];
     List<Movie> moviesList = List<Map<String, dynamic>>.from(decodedList)
         .map((Map<String, dynamic> model) => Movie.fromJson(model))
@@ -47,7 +70,24 @@ Future<http.Response> addMovie(Movie movie) {
     body: JSON.jsonEncode(<String, dynamic>{
       'name': movie.title,
       'addedBy': movie.creator.name,
-      'seen': false
+      'seen': movie.seen,
+      'rating': movie.rating
     }),
   );
+}
+
+Future<IMDBResult> getIMDBResult(String title) {
+  var queryParameters = {
+    IMDBAPI.keyParamName: IMDBAPI.key,
+    't': title,
+  };
+
+  Uri uri = Uri.http(IMDBAPI.domain, IMDBAPI.path, queryParameters);
+  return http.get(uri).then((json) {
+    Map<String, dynamic> obj = JSON.jsonDecode(json.body);
+    if(obj["Error"] != null || double.tryParse(obj["imdbRating"]) == null){
+      return IMDBResult.error;
+    }
+    return IMDBResult(title: obj["Title"], rating: double.parse(obj["imdbRating"]));
+  });
 }

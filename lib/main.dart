@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:koala/MainMenuCard.dart';
+import 'package:koala/custom_icons_icons.dart';
 import 'package:koala/movie/MovieListWidget.dart';
 import 'package:koala/todo/ToDoList.dart';
 
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Home'),
     );
   }
 }
@@ -67,13 +68,15 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text("🐨", textScaleFactor: 2.0,),
+        backgroundColor: Colors.deepPurple[100],
       ),
       body: Column(
           children: <Widget>[
-            MainMenuCard((context) => ToDoListWidget(), "ToDo"),
-            MainMenuCard((context) => MovieListWidget(), "Movies"),
-            MainMenuCard((context) => MovieListWidget(), "Recipes"),
+            MainMenuCard((context) => ToDoListWidget(), "ToDo", Colors.yellow[800], Icons.list),
+            MainMenuCard((context) => MovieListWidget(), "Movies", Colors.orange[800], Icons.local_movies),
+            MainMenuCard((context) => MovieListWidget(), "Recipes", Colors.green[800], Icons.restaurant),
+            MainMenuCard((context) => MovieListWidget(), "Wines", Colors.purple[800], CustomIcons.wine),
           ]
       ),
     );

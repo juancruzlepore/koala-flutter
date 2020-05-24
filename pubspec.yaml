@@ -93,6 +93,9 @@ flutter:
           weight: 400
         - asset: assets/fonts/Roboto-Black.ttf
           weight: 700
+    - family:  CustomIcons
+      fonts:
+        - asset: assets/fonts/CustomIcons.ttf
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
