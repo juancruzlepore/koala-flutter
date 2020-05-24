@@ -3,5 +3,12 @@
   "main": "main_node.js",
   "scripts": {
     "start": "node main_node.js"
+  },
+  "engines": {
+    "node": "14.x"
+  },
+  "dependencies": {
+    "ejs": "^2.5.6",
+    "express": "^4.15.2"
   }
 }
