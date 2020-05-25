@@ -7,6 +7,8 @@ import '../Person.dart';
 import 'Movie.dart';
 import 'MovieWidget.dart';
 
+enum SeenFilterType { ALL, SEEN, NOT_SEEN }
+
 class MovieListWidget extends StatefulWidget {
   MovieListWidget({Key key}) : super(key: key);
 
@@ -16,10 +18,16 @@ class MovieListWidget extends StatefulWidget {
 
 class _MovieListWidgetState extends State<MovieListWidget> {
   Future<List<Movie>> moviesFuture;
-  List<Movie> movies;
+  List<Movie> movies = [];
+  List<Movie> showingMovies;
   Person user = Person.Anne;
+  SeenFilterType seenFilter = SeenFilterType.ALL;
 
   _MovieListWidgetState(this.moviesFuture);
+
+  void updateShowingMovies() {
+    this.showingMovies = movies.where((m) => shouldShowMovie(m)).toList();
+  }
 
   Future<Movie> showAddMovieDialog() {
     TextEditingController newMovieTextEditingCtrl = TextEditingController();
@@ -64,23 +72,105 @@ class _MovieListWidgetState extends State<MovieListWidget> {
         });
   }
 
+  String getSeenFilterText() {
+    switch (seenFilter) {
+      case SeenFilterType.ALL:
+        return "showing all";
+      case SeenFilterType.SEEN:
+        return "showing only seen";
+      case SeenFilterType.NOT_SEEN:
+        return "showing only not seen";
+    }
+    return "";
+  }
+
+  Icon getSeenFilterIcon() {
+    switch (seenFilter) {
+      case SeenFilterType.ALL:
+        return Icon(
+          Icons.remove_red_eye,
+          color: Colors.green[400],
+        );
+      case SeenFilterType.SEEN:
+        return Icon(
+          Icons.remove_red_eye,
+          color: Colors.blue,
+        );
+      case SeenFilterType.NOT_SEEN:
+        return Icon(
+          Icons.remove_red_eye,
+          color: Colors.grey[400],
+        );
+    }
+    return null;
+  }
+
+  bool shouldShowMovie(Movie m) {
+    switch (seenFilter) {
+      case SeenFilterType.ALL:
+        return true;
+      case SeenFilterType.SEEN:
+        return m.seen;
+      case SeenFilterType.NOT_SEEN:
+        return !m.seen;
+    }
+    return false;
+  }
+
+  Widget buildSeenFilter() {
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: FlatButton(
+          child: Row(children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: getSeenFilterIcon(),
+            ),
+            Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text(getSeenFilterText()))
+          ]),
+          color: Colors.orangeAccent[300],
+          textColor: Colors.grey[400],
+          onPressed: () {
+            setState(() {
+              switch (seenFilter) {
+                case SeenFilterType.ALL:
+                  seenFilter = SeenFilterType.NOT_SEEN;
+                  break;
+                case SeenFilterType.NOT_SEEN:
+                  seenFilter = SeenFilterType.SEEN;
+                  break;
+                case SeenFilterType.SEEN:
+                  seenFilter = SeenFilterType.ALL;
+                  break;
+              }
+              updateShowingMovies();
+            });
+          },
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
+    updateShowingMovies();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange[800],
         title: Row(children: [
           Text("Movies"),
-          Expanded(
-              child: GestureDetector(
-                  onTap: () {
-                    log('pressed avatar');
-                    setState(() {
-                      this.user =
-                          user == Person.Anne ? Person.Juan : Person.Anne;
-                    });
-                  },
-                  child: this.user.getAvatar(12)))
+          Spacer(),
+          buildSeenFilter(),
+          GestureDetector(
+              onTap: () {
+                log('pressed avatar');
+                setState(() {
+                  this.user = user == Person.Anne ? Person.Juan : Person.Anne;
+                });
+              },
+              child: this.user.getAvatar(12))
         ]),
       ),
       body: FutureBuilder<List<Movie>>(
@@ -120,8 +210,10 @@ class _MovieListWidgetState extends State<MovieListWidget> {
   }
 
   Widget buildMoviesList(List<Movie> movies) {
+    updateShowingMovies();
     return Center(
-        child: Column(
-            children: <Widget>[for (var movie in movies) MovieWidget(movie)]));
+        child: ListView(children: <Widget>[
+      for (var movie in showingMovies) MovieWidget(movie)
+    ]));
   }
 }

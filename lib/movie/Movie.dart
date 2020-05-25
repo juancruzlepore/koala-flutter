@@ -16,12 +16,12 @@ abstract class IMDBAPI {
 class IMDBResult {
   String title;
   double rating;
+  String genre;
   bool found;
 
   static final IMDBResult error = IMDBResult(found: false);
 
-  IMDBResult({this.title, this.rating, this.found});
-
+  IMDBResult({this.title, this.rating, this.genre, this.found});
 }
 
 class Movie {
@@ -29,15 +29,29 @@ class Movie {
   Person creator;
   bool seen;
   double rating;
+  List<String> genre;
 
-  Movie(this.title, this.creator, this.seen, [this.rating = -1]);
+  Movie(this.title, this.creator, this.seen, [this.rating = -1, this.genre]);
+
+  void setGenre(String genre){
+    this.genre = getGenreList(genre);
+  }
+
+  static List<String> getGenreList(String genreString) {
+    if (genreString == null || genreString.isEmpty) return [];
+    return genreString.split(',')
+        .map((g) => g.trim())
+        .where((g) => g.isNotEmpty)
+        .toList();
+  }
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
-      json['name'],
-      Person.fromName(json['addedBy']),
-      json['seen'],
-      json['rating'],
+        json['name'],
+        Person.fromName(json['addedBy']),
+        json['seen'],
+        json['rating'],
+        getGenreList((json['genre'] ?? "") as String)
     );
   }
 }
@@ -71,7 +85,8 @@ Future<http.Response> addMovie(Movie movie) {
       'name': movie.title,
       'addedBy': movie.creator.name,
       'seen': movie.seen,
-      'rating': movie.rating
+      'rating': movie.rating,
+      'genre': movie.genre?.join(',')
     }),
   );
 }
@@ -85,9 +100,12 @@ Future<IMDBResult> getIMDBResult(String title) {
   Uri uri = Uri.http(IMDBAPI.domain, IMDBAPI.path, queryParameters);
   return http.get(uri).then((json) {
     Map<String, dynamic> obj = JSON.jsonDecode(json.body);
-    if(obj["Error"] != null || double.tryParse(obj["imdbRating"]) == null){
+    if (obj["Error"] != null || double.tryParse(obj["imdbRating"]) == null) {
       return IMDBResult.error;
     }
-    return IMDBResult(title: obj["Title"], rating: double.parse(obj["imdbRating"]));
+    return IMDBResult(
+        title: obj["Title"],
+        rating: double.parse(obj["imdbRating"]),
+        genre: obj["Genre"]);
   });
 }
