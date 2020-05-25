@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert' as JSON;
 import 'dart:developer';
 
-//import "package:json_object/json_object.dart";
 import 'package:http/http.dart' as http;
 import 'package:koala/Person.dart';
 
@@ -33,26 +32,22 @@ class Movie {
 
   Movie(this.title, this.creator, this.seen, [this.rating = -1, this.genre]);
 
-  void setGenre(String genre){
+  void setGenre(String genre) {
     this.genre = getGenreList(genre);
   }
 
   static List<String> getGenreList(String genreString) {
     if (genreString == null || genreString.isEmpty) return [];
-    return genreString.split(',')
+    return genreString
+        .split(',')
         .map((g) => g.trim())
         .where((g) => g.isNotEmpty)
         .toList();
   }
 
   factory Movie.fromJson(Map<String, dynamic> json) {
-    return Movie(
-        json['name'],
-        Person.fromName(json['addedBy']),
-        json['seen'],
-        json['rating'],
-        getGenreList((json['genre'] ?? "") as String)
-    );
+    return Movie(json['name'], Person.fromName(json['addedBy']), json['seen'],
+        json['rating'], getGenreList((json['genre'] ?? "") as String));
   }
 }
 
@@ -96,9 +91,9 @@ Future<IMDBResult> getIMDBResult(String title) {
     IMDBAPI.keyParamName: IMDBAPI.key,
     't': title,
   };
-
+  Map<String, String> headers = {};
   Uri uri = Uri.https(IMDBAPI.domain, IMDBAPI.path, queryParameters);
-  return http.get(uri).then((json) {
+  return http.get(uri, headers: headers).then((json) {
     Map<String, dynamic> obj = JSON.jsonDecode(json.body);
     if (obj["Error"] != null || double.tryParse(obj["imdbRating"]) == null) {
       return IMDBResult.error;
