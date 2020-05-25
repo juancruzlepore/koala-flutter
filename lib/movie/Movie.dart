@@ -97,7 +97,7 @@ Future<IMDBResult> getIMDBResult(String title) {
     't': title,
   };
 
-  Uri uri = Uri.http(IMDBAPI.domain, IMDBAPI.path, queryParameters);
+  Uri uri = Uri.https(IMDBAPI.domain, IMDBAPI.path, queryParameters);
   return http.get(uri).then((json) {
     Map<String, dynamic> obj = JSON.jsonDecode(json.body);
     if (obj["Error"] != null || double.tryParse(obj["imdbRating"]) == null) {
