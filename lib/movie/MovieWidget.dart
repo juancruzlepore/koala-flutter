@@ -42,7 +42,6 @@ class _MovieWidgetState extends State<MovieWidget> {
         future: getIMDBResult(movie.title),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            movie.setGenre(snapshot.data.genre);
             movie.rating = snapshot.data.rating;
             addMovie(movie);
             return MovieRatingWidget(snapshot.data.rating);
@@ -69,7 +68,6 @@ class _MovieWidgetState extends State<MovieWidget> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             movie.setGenre(snapshot.data.genre);
-            movie.rating = snapshot.data.rating;
             addMovie(movie);
             return MovieGenresWidget(movie.genre);
           } else if (snapshot.hasError) {
