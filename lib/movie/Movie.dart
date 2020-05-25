@@ -9,7 +9,7 @@ import 'package:koala/Person.dart';
 abstract class IMDBAPI {
   static const String key = "847a4c0c";
   static const String keyParamName = "apikey";
-  static const String domain = "www.omdbapi.com";
+  static const String domain = "omdbapi.com";
   static const String path = "/";
 }
 
